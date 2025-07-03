@@ -119,3 +119,29 @@ exports.updateMessage = async (req, res) => {
         res.status(500).json({ message: '메시지 수정 실패', error: err.message });
     }
 };
+
+exports.deleteMessage = async (req, res) => {
+    const messageId = req.params.messageId;
+    const userId = req.user.id;
+
+    try {
+        // 해당 메시지가 존재하고 본인 것이 맞는지 확인
+        const [messages] = await db.query(
+            'SELECT * FROM messages WHERE id = ? AND sender_id = ?',
+            [messageId, userId]
+        );
+
+        if (messages.length === 0) {
+            return res.status(403).json({ message: '삭제 권한이 없습니다.' });
+        }
+
+        // 삭제
+        await db.query('DELETE FROM messages WHERE id = ?', [messageId]);
+
+        res.status(200).json({ message: '메시지 삭제 완료' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: '메시지 삭제 실패', error: err.message });
+    }
+};
+
