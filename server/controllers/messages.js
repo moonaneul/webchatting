@@ -57,3 +57,28 @@ exports.getMessages = async (req, res) => {
         res.status(500).json({ message: '메시지 조회 실패', error: err.message });
     }
 };
+exports.markAsRead = async (req, res) => {
+    const messageId = req.params.messageId;
+    const userId = req.user.id;
+
+    try {
+        // 메시지가 존재하는지 확인
+        const [messages] = await db.query('SELECT * FROM messages WHERE id = ?', [messageId]);
+        if (messages.length === 0) {
+            return res.status(404).json({ message: '메시지를 찾을 수 없습니다.' });
+        }
+
+        // 이미 읽은 메시지면 무시 (선택사항)
+        if (messages[0].is_read === 1) {
+            return res.status(200).json({ message: '이미 읽은 메시지입니다.' });
+        }
+
+        // 메시지를 읽음으로 표시
+        await db.query('UPDATE messages SET is_read = 1 WHERE id = ?', [messageId]);
+
+        res.status(200).json({ message: '메시지를 읽음 처리했습니다.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: '서버 오류', error: err.message });
+    }
+};

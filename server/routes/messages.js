@@ -1,15 +1,16 @@
 // ✅ routes/messages.js
 const express = require('express');
 const router = express.Router();
+const { sendMessage, getMessages, markAsRead } = require('../controllers/messages'); // ✅ 구조분해로 한 번에 가져옴
+const { authenticateToken } = require('../middlewares/auth');  // ✅ 미들웨어 함수 확인
 
-const { sendMessage } = require('../controllers/messages');  // ✅ 구조분해 잘 했는지
-const { authenticateToken } = require('../middlewares/auth');  // ✅ 미들웨어가 함수인지
-
+// 메시지 전송
 router.post('/', authenticateToken, sendMessage);
 
-const { getMessages } = require('../controllers/messages');
-
-// GET /api/messages/:conversationId
+// 메시지 목록 조회
 router.get('/:conversationId', authenticateToken, getMessages);
+
+// 메시지 읽음 처리
+router.patch('/:messageId/read', authenticateToken, markAsRead);
 
 module.exports = router;
