@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const chatroomController = require('../controllers/chatroom');
-const authenticateToken = require('../middlewares/auth');
+const { authenticateToken } = require('../middlewares/auth'); // ✅ 수정
 
 // 채팅방 생성 (로그인 필요)
 router.post('/', authenticateToken, chatroomController.createRoom);
