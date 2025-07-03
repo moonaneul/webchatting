@@ -14,6 +14,9 @@ app.use('/api/auth', authRoutes);
 const userRoutes = require('./routes/user');
 app.use('/api/user', userRoutes);
 
+const chatroomRoutes = require('./routes/chatroom');
+app.use('/api/chatroom', chatroomRoutes);
+
 // 테스트용
 app.get('/', async (req, res) => {
     try {
